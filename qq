@@ -1,0 +1,54 @@
+-- Configuration
+local PLAYER_NAME_COLOR = Color3.fromRGB(0, 255, 0)  -- Color of the name tag for players (Green in this case)
+local PLAYER_NAME_OFFSET = Vector3.new(0, 3, 0)  -- Offset above the player's part for the name tag
+
+-- Function to create a BillboardGui for name tags
+local function createNameTag(player)
+    local character = player.Character
+    if not character then return end  -- Ensure the player's character exists
+
+    local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+    if not humanoidRootPart then return end  -- Ensure the player has a humanoid root part
+
+    local billboardGui = Instance.new("BillboardGui")
+    billboardGui.Size = UDim2.new(0, 200, 0, 50)  -- Size of the name tag
+    billboardGui.AlwaysOnTop = true
+    billboardGui.StudsOffset = PLAYER_NAME_OFFSET  -- Offset above the player's part
+    billboardGui.Enabled = true
+
+    local nameLabel = Instance.new("TextLabel", billboardGui)
+    nameLabel.Size = UDim2.new(1, 0, 1, 0)
+    nameLabel.Text = player.Name
+    nameLabel.TextColor3 = PLAYER_NAME_COLOR
+    nameLabel.TextScaled = true
+    nameLabel.BackgroundTransparency = 1
+
+    billboardGui.Parent = humanoidRootPart
+end
+
+-- Function to handle highlighting players
+local function highlightPlayers()
+    while true do
+        wait(1)  -- Adjust the interval as needed
+        
+        local players = game.Players:GetPlayers()
+
+        for _, player in ipairs(players) do
+            local character = player.Character
+            if character then
+                -- Highlight the player's character
+                local highlight = Instance.new("SelectionBox")
+                highlight.Adornee = character.PrimaryPart or character:FindFirstChildWhichIsA("BasePart")
+                highlight.Color3 = Color3.new(1, 1, 1)  -- White color
+                highlight.LineThickness = 0.05
+                highlight.Parent = character
+                
+                -- Create the name tag for the player
+                createNameTag(player)
+            end
+        end
+    end
+end
+
+-- Start highlighting players
+highlightPlayers()
